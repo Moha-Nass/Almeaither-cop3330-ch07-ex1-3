@@ -6,6 +6,7 @@
 
 #include "std_lib_facilities.h/file.cpp"
 
+
 struct Token {
 char kind;
 double value;
@@ -25,13 +26,13 @@ void unget(Token t) { buffer = t; full = true; }
 void ignore(char);
 };
 
-const char let = ‘#’;
-const char exitprog = ‘E’;
-const char print = ‘;’;
-const char number = ‘8’;
-const char name = ‘a’;
-const char sqroot = ‘S’;
-const char power = ‘P’;
+const char * let = "#";
+const char * exitprog = "E";
+const char * print = ";";
+const char * number = "8";
+const char * name = "a";
+const char * sqroot = "S";
+const char * power = "P";
 
 Token Token_stream::get()
 {
@@ -41,57 +42,57 @@ full = false; return buffer;
 char ch;
 cin >> ch;
 switch (ch) {
-case ‘(‘:
-case ‘)’:
-case ‘+’:
-case ‘-‘:
-case ‘*’:
-case ‘/’:
-case ‘%’:
-case ‘;’:
-case ‘=’:
-case ‘k’:
-case ‘,’:
+case * "(":
+case * ")":
+case * "+":
+case * "-":
+case * "*":
+case * "/":
+case * "%":
+case * ";":
+case * "=":
+case * "k":
+case * ",":
 {
 return Token(ch);
 }
-case ‘#’:
+case * "#":
 {
-return Token(let);
+return Token(*let);
 }
-case ‘.’:
-case ‘0’:
-case ‘1’:
-case ‘2’:
-case ‘3’:
-case ‘4’:
-case ‘5’:
-case ‘6’:
-case ‘7’:
-case ‘8’:
-case ‘9’:
+case * ".":
+case * "0":
+case * "1":
+case * "2":
+case * "3":
+case * "4":
+case * "5":
+case * "6":
+case * "7":
+case * "8":
+case * "9":
 {
 cin.unget();
 double val;
 cin >> val;
-return Token(number, val);
+return Token(*number, val);
 }
 default:
 {
-if (isalpha(ch) || ch == ‘_’) { //is ch a letter?
+if (isalpha(ch) || ch == *"_") { //is ch a letter?
 string s;
 s += ch;
-while (cin.get(ch) && (isalpha(ch) || isdigit(ch) || ch == ‘_’)) { //reads chars, strings or digits
+while (cin.get(ch) && (isalpha(ch) || isdigit(ch) || ch == *"_")) { //reads chars, strings or digits
 s += ch; //Error 2: s = ch;
 }
 cin.unget(); //puts the most recently read character back into the stream
-if (s == "exit") return Token(exitprog); //Error 2: if (s == "quit") return Token(name);
-if (s == "sqrt") return Token(sqroot);
-if (s == "pow") return Token(power);
-return Token(name, s);
+if (s == "exit") return Token(*exitprog); //Error 2: if (s == "quit") return Token(name);
+if (s == "sqrt") return Token(*sqroot);
+if (s == "pow") return Token(*power);
+return Token(*name, s);
 }
 error("Bad token");
-return Token(‘ ‘);
+return Token(*" ");
 }
 }
 }
@@ -155,18 +156,18 @@ double primary()
 {
 Token t = ts.get();
 switch (t.kind) {
-case ‘(‘:
+case * "(":
 {
 double d = expression();
 t = ts.get();
-if (t.kind != ‘)’) error("’)’ expected");
+if (t.kind != *")") error("");" expected";
 return d;
 }
-case ‘-‘:
+case * "-":
 {
 return -primary();
 }
-case ‘+’:
+case * "+":
 {
 return primary();
 }
@@ -177,8 +178,8 @@ return t.value;
 case sqroot:
 {
 t = ts.get();
-if (t.kind != ‘(‘) {
-error("'(‘ expected");
+if (t.kind != *"(") {
+error(""); "expected";
 }
 ts.unget(t);
 double d = primary();
@@ -190,21 +191,21 @@ return sqrt(d);
 case power:
 {
 t = ts.get();
-if (t.kind != ‘(‘) {
+if (t.kind != * "(") {
 error("'(‘ expected");
 }
 
 double x = int(expression());
 
 t = ts.get();
-if (t.kind != ‘,’) {
+if (t.kind != *",") {
 error("’,’ expected");
 }
 
 int n = int(expression());
 
 t = ts.get();
-if (t.kind == ‘)’) {
+if (t.kind == *")") {
 return pow(x, n);
 }
 else {
@@ -229,17 +230,17 @@ double left = primary();
 while (true) {
 Token t = ts.get();
 switch (t.kind) {
-case ‘k’:
+case * "k":
 {
 left *= 1000;
 break;
 }
-case ‘*’:
+case * "*":
 {
 left *= primary();
 break;
 }
-case ‘/’:
+case * "/":
 {
 double d = primary();
 if (d == 0) error("divide by zero");
@@ -260,12 +261,12 @@ double left = term();
 while (true) {
 Token t = ts.get();
 switch (t.kind) {
-case ‘+’:
+case * "+":
 {
 left += term();
 break;
 }
-case ‘-‘:
+case * "-":
 {
 left -= term();
 break;
@@ -282,7 +283,7 @@ return left;
 double declaration()
 {
 Token t = ts.get();
-if (t.kind != name) { //if (t.kind != ‘a’)
+if (t.kind != *name) { //if (t.kind != ‘a’)
 error("name expected in declaration");
 }
 
@@ -292,7 +293,7 @@ error(name, " declared twice");
 }
 
 Token t2 = ts.get();
-if (t2.kind != ‘=’) {
+if (t2.kind != *"=") {
 error("= missing in declaration of ", name);
 }
 double d = expression();
@@ -318,7 +319,7 @@ return expression();
 
 void clean_up_mess()
 {
-ts.ignore(print);
+ts.ignore(*print);
 }
 
 const string prompt = "> ";
@@ -329,10 +330,10 @@ void calculate()
 while (true) try {
 cout << prompt;
 Token t = ts.get();
-while (t.kind == print) {
+while (t.kind == *print) {
 t = ts.get();
 }
-if (t.kind == exitprog) {
+if (t.kind == *exitprog) {
 return;
 }
 ts.unget(t);
@@ -353,12 +354,12 @@ return 0;
 catch (exception& e) {
 cerr << "exception: " << e.what() << endl;
 char c;
-while (cin >> c&& c != ‘;’);
+while (cin >> c&& c != *";");
 return 1;
 }
-catch (…) {
+catch (...) {
 cerr << "exception\n";
 char c;
-while (cin >> c && c != ‘;’);
+while (cin >> c && c != *";");
 return 2;
 }
